@@ -16,6 +16,13 @@
         .page { display: none; }
         .page.active { display: block; }
         .nav-active { color: #10b981; font-weight: 700; }
+        .chat-message {
+            animation: slideUp 0.3s ease-out;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body class="pb-24 select-none">
@@ -89,8 +96,8 @@
         <div class="bg-white border border-slate-100 rounded-xl p-4 shadow-sm space-y-3">
             <h4 class="text-slate-700 font-bold text-sm flex items-center gap-2"><i class="fa-solid fa-book-quran text-emerald-500"></i> Tilawah Tracker (+1 XP/Hlm)</h4>
             <div class="flex gap-2">
-                <input type="number" id="input-tilawah" class="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-emerald-500" placeholder="Jumlah halaman selesai...">
-                <button id="btn-save-tilawah" class="bg-emerald-500 text-white font-bold px-4 py-2 rounded-xl text-sm">Simpan</button>
+                <input type="number" id="input-tilawah" class="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-emerald-500" placeholder="Jumlah halaman selesai..." min="1">
+                <button id="btn-save-tilawah" class="bg-emerald-500 text-white font-bold px-4 py-2 rounded-xl text-sm hover:bg-emerald-600">Simpan</button>
             </div>
             <p class="text-xs text-slate-400">Progress Khatam: <span id="text-khatam">0</span> / 604 Halaman</p>
         </div>
@@ -100,8 +107,8 @@
             <h4 class="text-slate-700 font-bold text-sm text-left flex items-center gap-2"><i class="fa-solid fa-calculator text-emerald-500"></i> Tasbih Counter (+2 XP)</h4>
             <div class="text-3xl font-black text-slate-700 my-2" id="dzikir-display">0 / 33</div>
             <div class="flex gap-2 justify-center">
-                <button id="btn-count-dzikir" class="w-32 bg-emerald-500 text-white font-bold py-3 rounded-xl shadow-md active:scale-95 transition-transform">TAP</button>
-                <button id="btn-reset-dzikir" class="bg-slate-100 text-slate-500 font-bold px-4 py-3 rounded-xl"><i class="fa-solid fa-rotate-left"></i></button>
+                <button id="btn-count-dzikir" class="w-32 bg-emerald-500 text-white font-bold py-3 rounded-xl shadow-md active:scale-95 transition-transform hover:bg-emerald-600">TAP</button>
+                <button id="btn-reset-dzikir" class="bg-slate-100 text-slate-500 font-bold px-4 py-3 rounded-xl hover:bg-slate-200"><i class="fa-solid fa-rotate-left"></i></button>
             </div>
         </div>
 
@@ -110,21 +117,23 @@
             <h4 class="text-slate-700 font-bold text-sm flex items-center gap-2"><i class="fa-solid fa-hand-holding-heart text-emerald-500"></i> Amal & Belajar Harian</h4>
             <div class="space-y-2">
                 <div class="flex gap-2">
-                    <input type="number" id="input-sedekah" class="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-emerald-500" placeholder="Nominal Sedekah (Rp)...">
-                    <button id="btn-save-sedekah" class="bg-teal-600 text-white text-xs font-bold px-3 py-2 rounded-xl">Simpan</button>
+                    <input type="number" id="input-sedekah" class="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-emerald-500" placeholder="Nominal Sedekah (Rp)..." min="0">
+                    <button id="btn-save-sedekah" class="bg-teal-600 text-white text-xs font-bold px-3 py-2 rounded-xl hover:bg-teal-700">Simpan</button>
                 </div>
+                <p id="sedekah-status" class="text-xs text-teal-600 hidden">✅ Sedekah tersimpan</p>
                 <div class="flex gap-2">
                     <input type="text" id="input-belajar" class="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-emerald-500" placeholder="Materi Kajian / Durasi...">
-                    <button id="btn-save-belajar" class="bg-teal-600 text-white text-xs font-bold px-3 py-2 rounded-xl">Simpan</button>
+                    <button id="btn-save-belajar" class="bg-teal-600 text-white text-xs font-bold px-3 py-2 rounded-xl hover:bg-teal-700">Simpan</button>
                 </div>
+                <p id="belajar-status" class="text-xs text-teal-600 hidden">✅ Belajar tersimpan</p>
             </div>
         </div>
 
         <!-- JURNAL MUHASABAH MALAM -->
         <div class="bg-white border border-slate-100 rounded-xl p-4 shadow-sm space-y-3">
             <h4 class="text-slate-700 font-bold text-sm flex items-center gap-2"><i class="fa-solid fa-book text-emerald-500"></i> Jurnal Muhasabah Malam (+2 XP)</h4>
-            <textarea id="input-muhasabah" rows="3" class="w-full border border-slate-200 rounded-xl p-3 text-sm focus:outline-emerald-500 placeholder-slate-400" placeholder="Apa yang berhasil hari ini..."></textarea>
-            <button id="btn-save-muhasabah" class="w-full bg-slate-800 text-white font-bold py-2.5 rounded-xl text-sm shadow-md">Simpan Jurnal Malam</button>
+            <textarea id="input-muhasabah" rows="3" class="w-full border border-slate-200 rounded-xl p-3 text-sm focus:outline-emerald-500 placeholder-slate-400" placeholder="Apa yang berhasil hari ini? Apa yang perlu ditingkatkan? Syukuri pencapaian dan rencanakan perbaikan..."></textarea>
+            <button id="btn-save-muhasabah" class="w-full bg-slate-800 text-white font-bold py-2.5 rounded-xl text-sm shadow-md hover:bg-slate-900">Simpan Jurnal Malam</button>
         </div>
     </main>
 
@@ -147,12 +156,12 @@
             <h4 class="text-slate-700 font-bold text-sm border-b pb-2 flex items-center gap-2"><i class="fa-solid fa-robot text-emerald-500"></i> Fastabiq AI Coach (Gemini)</h4>
             <!-- Ruang Obrolan Chat -->
             <div id="chat-box" class="flex-1 overflow-y-auto space-y-2 p-2 text-xs">
-                <div class="bg-slate-100 text-slate-700 p-2.5 rounded-xl max-w-[85%]">Assalamualaikum! Aku Fastabiq AI Coach. Kirimkan target ibadahmu, atau simpan jurnal Muhasabah agar aku bisa membantu breakdown dan motivasi Anda dengan wawasan Islami.</div>
+                <div class="bg-slate-100 text-slate-700 p-2.5 rounded-xl max-w-[85%]">Assalamualaikum! 👋 Aku Fastabiq AI Coach. Kirimkan target ibadahmu, atau simpan jurnal Muhasabah agar aku bisa membantu breakdown dan memberikan motivasi Islami untuk perjalanan amalmu.</div>
             </div>
             <!-- Input Box -->
             <div class="flex gap-2 pt-2 border-t">
-                <input type="text" id="chat-input" class="w-full border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-emerald-500" placeholder="Tanya AI Coach atau breakdown target...">
-                <button id="btn-send-chat" class="bg-emerald-500 text-white px-4 py-2 rounded-xl text-xs font-bold"><i class="fa-solid fa-paper-plane"></i></button>
+                <input type="text" id="chat-input" class="w-full border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-emerald-500" placeholder="Tanya AI Coach atau breakdown target ibadahmu...">
+                <button id="btn-send-chat" class="bg-emerald-500 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-emerald-600"><i class="fa-solid fa-paper-plane"></i></button>
             </div>
         </div>
     </main>
@@ -162,50 +171,60 @@
         <div class="bg-white w-full max-w-md rounded-t-2xl sm:rounded-2xl p-6 space-y-4 max-h-[90vh] overflow-y-auto shadow-xl">
             <div class="flex justify-between items-center border-b pb-3">
                 <h3 class="text-lg font-bold text-slate-800" id="modal-title">Masuk ke Fastabiq</h3>
-                <button id="btn-close-login" class="text-slate-400 text-xl p-1"><i class="fa-solid fa-xmark"></i></button>
+                <button id="btn-close-login" class="text-slate-400 text-xl p-1 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div id="auth-methods" class="grid grid-cols-3 gap-2 text-center">
-                <button id="method-email" class="bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl p-2.5 text-xs font-semibold flex flex-col items-center gap-1"><i class="fa-regular fa-envelope text-lg"></i> Email</button>
-                <button id="method-phone" class="bg-slate-50 border text-slate-600 rounded-xl p-2.5 text-xs font-medium flex flex-col items-center gap-1"><i class="fa-solid fa-phone text-lg"></i> No. HP</button>
-                <button id="method-guest" class="bg-slate-50 border text-slate-600 rounded-xl p-2.5 text-xs font-medium flex flex-col items-center gap-1"><i class="fa-solid fa-user-secret text-lg"></i> Guest</button>
+                <button id="method-email" class="bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl p-2.5 text-xs font-semibold flex flex-col items-center gap-1 hover:bg-emerald-100"><i class="fa-regular fa-envelope text-lg"></i> Email</button>
+                <button id="method-phone" class="bg-slate-50 border text-slate-600 rounded-xl p-2.5 text-xs font-medium flex flex-col items-center gap-1 hover:bg-slate-100"><i class="fa-solid fa-phone text-lg"></i> No. HP</button>
+                <button id="method-guest" class="bg-slate-50 border text-slate-600 rounded-xl p-2.5 text-xs font-medium flex flex-col items-center gap-1 hover:bg-slate-100"><i class="fa-solid fa-user-secret text-lg"></i> Guest</button>
             </div>
+
+            <!-- FORM EMAIL LOGIN/REGISTER -->
             <form id="form-email" class="space-y-3">
-                <input type="email" id="email-input" required class="w-full border rounded-xl px-3 py-2.5 text-sm" placeholder="Email">
-                <input type="password" id="password-input" required class="w-full border rounded-xl px-3 py-2.5 text-sm" placeholder="Password">
-                <div class="text-right"><button type="button" id="btn-forgot-password" class="text-xs text-emerald-600">Lupa Password?</button></div>
-                <button type="submit" class="w-full bg-emerald-500 text-white font-bold py-3 rounded-xl text-sm shadow-md">Masuk</button>
-                <p class="text-center text-xs text-slate-400">Belum punya akun? <span id="toggle-register" class="text-emerald-600 font-bold cursor-pointer">Daftar</span></p>
+                <input type="email" id="email-input" required class="w-full border rounded-xl px-3 py-2.5 text-sm focus:outline-emerald-500" placeholder="Email">
+                <input type="password" id="password-input" required class="w-full border rounded-xl px-3 py-2.5 text-sm focus:outline-emerald-500" placeholder="Password">
+                <div class="text-right"><button type="button" id="btn-forgot-password" class="text-xs text-emerald-600 hover:underline">Lupa Password?</button></div>
+                <button type="submit" id="btn-submit-email" class="w-full bg-emerald-500 text-white font-bold py-3 rounded-xl text-sm shadow-md hover:bg-emerald-600">Masuk</button>
+                <p class="text-center text-xs text-slate-400">Belum punya akun? <span id="toggle-register" class="text-emerald-600 font-bold cursor-pointer hover:underline">Daftar di sini</span></p>
+                <p class="text-center text-xs text-slate-400"><span id="toggle-login-back" class="text-emerald-600 font-bold cursor-pointer hover:underline hidden">← Kembali ke Login</span></p>
             </form>
+
+            <!-- FORM PHONE OTP -->
             <form id="form-phone" class="space-y-3 hidden">
-                <div id="recaptcha-container"></div>
                 <div id="phone-input-group">
                     <input type="tel" id="phone-input" class="w-full border rounded-xl px-3 py-2.5 text-sm" placeholder="+628123456789">
-                    <button type="button" id="btn-send-otp" class="w-full bg-emerald-500 text-white font-bold py-3 rounded-xl text-sm mt-2">Kirim OTP SMS</button>
+                    <button type="button" id="btn-send-otp" class="w-full bg-emerald-500 text-white font-bold py-3 rounded-xl text-sm mt-2 hover:bg-emerald-600">Kirim OTP SMS</button>
                 </div>
                 <div id="otp-input-group" class="hidden">
                     <input type="number" id="otp-input" class="w-full border rounded-xl px-3 py-2.5 text-sm text-center font-bold tracking-widest" placeholder="000000">
-                    <button type="button" id="btn-verify-otp" class="w-full bg-teal-600 text-white font-bold py-3 rounded-xl text-sm mt-2">Verifikasi OTP</button>
+                    <button type="button" id="btn-verify-otp" class="w-full bg-teal-600 text-white font-bold py-3 rounded-xl text-sm mt-2 hover:bg-teal-700">Verifikasi OTP</button>
                 </div>
             </form>
+
+            <!-- FORM RESET PASSWORD -->
             <div id="form-reset" class="space-y-3 hidden">
                 <input type="email" id="reset-email-input" class="w-full border rounded-xl px-3 py-2.5 text-sm" placeholder="Masukkan Email Terdaftar">
-                <button id="btn-submit-reset" class="w-full bg-amber-500 text-white font-bold py-3 rounded-xl text-sm">Kirim Link Reset</button>
+                <button id="btn-submit-reset" class="w-full bg-amber-500 text-white font-bold py-3 rounded-xl text-sm hover:bg-amber-600">Kirim Link Reset</button>
+                <p class="text-center text-xs text-slate-400"><span id="toggle-reset-back" class="text-emerald-600 font-bold cursor-pointer hover:underline">← Kembali ke Login</span></p>
             </div>
+
+            <!-- STATUS MESSAGES -->
+            <div id="auth-message" class="hidden p-3 rounded-lg text-sm text-center"></div>
         </div>
     </div>
 
     <!-- BOTTOM NAVIGATION MOUSE CONTROL -->
     <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 shadow-lg px-6 py-2 flex justify-between items-center max-w-md mx-auto z-40">
-        <button onclick="switchPage('home')" class="nav-btn text-emerald-500 flex flex-col items-center gap-1 py-1 px-3">
+        <button onclick="switchPage('home')" class="nav-btn text-emerald-500 flex flex-col items-center gap-1 py-1 px-3 hover:bg-slate-100 rounded-lg">
             <i class="fa-solid fa-house text-xl"></i><span class="text-[10px] font-bold">Home</span>
         </button>
-        <button onclick="switchPage('task')" class="nav-btn text-slate-400 flex flex-col items-center gap-1 py-1 px-3">
+        <button onclick="switchPage('task')" class="nav-btn text-slate-400 flex flex-col items-center gap-1 py-1 px-3 hover:bg-slate-100 rounded-lg">
             <i class="fa-solid fa-list-check text-xl"></i><span class="text-[10px] font-medium">Tracker</span>
         </button>
-        <button onclick="switchPage('analytics')" class="nav-btn text-slate-400 flex flex-col items-center gap-1 py-1 px-3">
+        <button onclick="switchPage('analytics')" class="nav-btn text-slate-400 flex flex-col items-center gap-1 py-1 px-3 hover:bg-slate-100 rounded-lg">
             <i class="fa-solid fa-chart-line text-xl"></i><span class="text-[10px] font-medium">Analitik</span>
         </button>
-        <button onclick="switchPage('ai')" class="nav-btn text-slate-400 flex flex-col items-center gap-1 py-1 px-3">
+        <button onclick="switchPage('ai')" class="nav-btn text-slate-400 flex flex-col items-center gap-1 py-1 px-3 hover:bg-slate-100 rounded-lg">
             <i class="fa-solid fa-robot text-xl"></i><span class="text-[10px] font-medium">AI Coach</span>
         </button>
     </nav>
@@ -213,7 +232,7 @@
     <!-- LOGIKA SISTEM JAVASCRIPT & BACKEND FIREBASE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, RecaptchaVerifier, signInWithPhoneNumber, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getAuth, signInAnonymously, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -231,15 +250,15 @@
         const db = getFirestore(app);
 
         let currentUid = null;
-        let localUserData = { totalXP: 0, xpToday: 0, streak: 0, score: 0, tilawahProgress: 0, dzikirCount: 0, sholat: {} };
+        let localUserData = { totalXP: 0, xpToday: 0, streak: 0, score: 0, tilawahProgress: 0, dzikirCount: 0, sholat: {}, sedekah: 0, belajar: [] };
         const listSholat = ["Subuh", "Dzuhur", "Ashar", "Maghrib", "Isya"];
 
         // NAVIGASI HALAMAN
         window.switchPage = function(pageId) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById('page-' + pageId).classList.add('active');
-            document.querySelectorAll('.nav-btn').forEach(btn => btn.className = "nav-btn text-slate-400 flex flex-col items-center gap-1 py-1 px-3");
-            event.currentTarget.className = "nav-btn text-emerald-500 font-bold flex flex-col items-center gap-1 py-1 px-3";
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.className = "nav-btn text-slate-400 flex flex-col items-center gap-1 py-1 px-3 hover:bg-slate-100 rounded-lg");
+            event.currentTarget.className = "nav-btn text-emerald-500 font-bold flex flex-col items-center gap-1 py-1 px-3 hover:bg-slate-100 rounded-lg";
         };
 
         // PEMBUATAN TRACKER SHOLAT SECARA DINAMIS
@@ -249,7 +268,7 @@
                 <div class="border rounded-xl p-3 bg-slate-50 flex flex-col gap-2">
                     <div class="flex justify-between items-center">
                         <span class="font-bold text-slate-700 text-sm">${s}</span>
-                        <button onclick="claimSholat('${s}')" id="btn-sholat-${s}" class="bg-emerald-500 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm">+2 XP</button>
+                        <button onclick="claimSholat('${s}')" id="btn-sholat-${s}" class="bg-emerald-500 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm hover:bg-emerald-600">+2 XP</button>
                     </div>
                     <div class="grid grid-cols-2 gap-2 text-[10px] font-medium text-slate-500">
                         <label><input type="checkbox" id="chk-${s}-tepat" class="mr-1"> Tepat Waktu</label>
@@ -269,7 +288,7 @@
                 document.getElementById('btn-logout').classList.remove('hidden');
                 await sinkronData();
             } else {
-                signInAnonymously(auth);
+                await signInAnonymously(auth);
             }
         });
 
@@ -286,7 +305,7 @@
                 localStorage.setItem('fastabiq_data', JSON.stringify(localUserData));
                 updateDashboardUI();
             } catch (e) {
-                console.log("Offline mode aktif, memuat data lokal browser.");
+                console.log("⚠️ Offline mode aktif, memuat data lokal browser.");
                 const cache = localStorage.getItem('fastabiq_data');
                 if (cache) localUserData = JSON.parse(cache);
                 updateDashboardUI();
@@ -352,6 +371,7 @@
             saveAndUpdate();
         };
 
+        // TILAWAH TRACKER
         document.getElementById('btn-save-tilawah').addEventListener('click', () => {
             const hlm = parseInt(document.getElementById('input-tilawah').value) || 0;
             if (hlm <= 0) return;
@@ -359,15 +379,17 @@
             localUserData.totalXP += hlm;
             localUserData.xpToday += hlm;
             document.getElementById('input-tilawah').value = "";
+            alert(`✅ +${hlm} halaman Tilawah! +${hlm} XP`);
             saveAndUpdate();
         });
 
+        // DZIKIR COUNTER
         document.getElementById('btn-count-dzikir').addEventListener('click', () => {
             localUserData.dzikirCount = (localUserData.dzikirCount || 0) + 1;
             if (localUserData.dzikirCount === 33) {
                 localUserData.totalXP += 2;
                 localUserData.xpToday += 2;
-                alert("Maa Syaa Allah, Dzikir Paket 33 Selesai! +2 XP");
+                alert("🎉 Maa Syaa Allah, Dzikir Paket 33 Selesai! +2 XP Bonus");
             }
             saveAndUpdate();
         });
@@ -377,13 +399,49 @@
             saveAndUpdate();
         });
 
+        // SEDEKAH TRACKER
+        document.getElementById('btn-save-sedekah').addEventListener('click', () => {
+            const nominal = parseInt(document.getElementById('input-sedekah').value) || 0;
+            if (nominal <= 0) return;
+            localUserData.sedekah = (localUserData.sedekah || 0) + nominal;
+            localUserData.totalXP += 3;
+            localUserData.xpToday += 3;
+            document.getElementById('input-sedekah').value = "";
+            const status = document.getElementById('sedekah-status');
+            status.classList.remove('hidden');
+            setTimeout(() => status.classList.add('hidden'), 2000);
+            alert(`✅ Sedekah Rp${nominal.toLocaleString('id-ID')} tersimpan! +3 XP`);
+            saveAndUpdate();
+        });
+
+        // BELAJAR TRACKER
+        document.getElementById('btn-save-belajar').addEventListener('click', () => {
+            const materi = document.getElementById('input-belajar').value.trim();
+            if (!materi) return;
+            if (!localUserData.belajar) localUserData.belajar = [];
+            localUserData.belajar.push({
+                materi: materi,
+                tanggal: new Date().toISOString().split('T')[0]
+            });
+            localUserData.totalXP += 2;
+            localUserData.xpToday += 2;
+            document.getElementById('input-belajar').value = "";
+            const status = document.getElementById('belajar-status');
+            status.classList.remove('hidden');
+            setTimeout(() => status.classList.add('hidden'), 2000);
+            alert(`✅ "${materi}" tersimpan! +2 XP`);
+            saveAndUpdate();
+        });
+
+        // MUHASABAH TRACKER
         document.getElementById('btn-save-muhasabah').addEventListener('click', () => {
-            const txt = document.getElementById('input-muhasabah').value;
-            if (!txt.trim()) return;
+            const txt = document.getElementById('input-muhasabah').value.trim();
+            if (!txt) return;
             localUserData.muhasabahJurnal = txt;
             localUserData.totalXP += 2;
             localUserData.xpToday += 2;
-            alert("Jurnal Muhasabah berhasil disimpan! +2 XP");
+            document.getElementById('input-muhasabah').value = "";
+            alert("✅ Jurnal Muhasabah berhasil disimpan! +2 XP");
             saveAndUpdate();
         });
 
@@ -393,28 +451,134 @@
             if (currentUid) {
                 try {
                     await setDoc(doc(db, "users", currentUid), localUserData);
-                } catch(e) { console.log("Gagal sinkron cloud, data disimpan lokal."); }
+                } catch(e) { console.log("⚠️ Gagal sinkron cloud, data disimpan lokal."); }
             }
         }
 
-        // INTEGRASI ARTIFICIAL INTELLIGENCE (GEMINI API) VIA BACKEND PROXY
-        // ⚠️ PENTING: API Key disimpan di backend, bukan di client-side code
+        // ================= FIREBASE AUTH HANDLERS =================
+        
+        // Email Form Toggle
+        document.getElementById('toggle-register').addEventListener('click', () => {
+            document.getElementById('modal-title').innerText = 'Daftar Akun Baru';
+            document.getElementById('btn-submit-email').innerText = 'Daftar';
+            document.getElementById('btn-forgot-password').classList.add('hidden');
+            document.getElementById('toggle-register').classList.add('hidden');
+            document.getElementById('toggle-login-back').classList.remove('hidden');
+            document.getElementById('form-email').dataset.mode = 'register';
+        });
+
+        document.getElementById('toggle-login-back').addEventListener('click', () => {
+            document.getElementById('modal-title').innerText = 'Masuk ke Fastabiq';
+            document.getElementById('btn-submit-email').innerText = 'Masuk';
+            document.getElementById('btn-forgot-password').classList.remove('hidden');
+            document.getElementById('toggle-register').classList.remove('hidden');
+            document.getElementById('toggle-login-back').classList.add('hidden');
+            document.getElementById('form-email').dataset.mode = 'login';
+        });
+
+        // Email Login/Register
+        document.getElementById('form-email').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email-input').value;
+            const password = document.getElementById('password-input').value;
+            const mode = document.getElementById('form-email').dataset.mode || 'login';
+
+            try {
+                if (mode === 'register') {
+                    await createUserWithEmailAndPassword(auth, email, password);
+                    showAuthMessage('✅ Registrasi berhasil! Selamat datang di Fastabiq', 'success');
+                    setTimeout(() => {
+                        document.getElementById('login-modal').classList.add('hidden');
+                        location.reload();
+                    }, 2000);
+                } else {
+                    await signInWithEmailAndPassword(auth, email, password);
+                    showAuthMessage('✅ Login berhasil!', 'success');
+                    setTimeout(() => {
+                        document.getElementById('login-modal').classList.add('hidden');
+                    }, 1500);
+                }
+            } catch (error) {
+                showAuthMessage('❌ ' + error.message, 'error');
+            }
+        });
+
+        // Password Reset
+        document.getElementById('btn-forgot-password').addEventListener('click', () => {
+            document.getElementById('form-email').classList.add('hidden');
+            document.getElementById('form-reset').classList.remove('hidden');
+        });
+
+        document.getElementById('toggle-reset-back').addEventListener('click', () => {
+            document.getElementById('form-reset').classList.add('hidden');
+            document.getElementById('form-email').classList.remove('hidden');
+        });
+
+        document.getElementById('btn-submit-reset').addEventListener('click', async () => {
+            const email = document.getElementById('reset-email-input').value;
+            try {
+                await sendPasswordResetEmail(auth, email);
+                showAuthMessage('✅ Link reset sudah dikirim ke email Anda!', 'success');
+                setTimeout(() => {
+                    document.getElementById('form-reset').classList.add('hidden');
+                    document.getElementById('form-email').classList.remove('hidden');
+                }, 2000);
+            } catch (error) {
+                showAuthMessage('❌ ' + error.message, 'error');
+            }
+        });
+
+        // Auth Method Toggle
+        document.getElementById('method-email').addEventListener('click', () => {
+            document.getElementById('form-email').classList.remove('hidden');
+            document.getElementById('form-phone').classList.add('hidden');
+            document.getElementById('method-email').classList.add('border-emerald-400', 'bg-emerald-100');
+            document.getElementById('method-phone').classList.remove('border-emerald-400', 'bg-emerald-100');
+            document.getElementById('method-guest').classList.remove('border-emerald-400', 'bg-emerald-100');
+        });
+
+        document.getElementById('method-guest').addEventListener('click', async () => {
+            showAuthMessage('✅ Login sebagai Guest...', 'success');
+            setTimeout(() => {
+                document.getElementById('login-modal').classList.add('hidden');
+            }, 1500);
+        });
+
+        function showAuthMessage(msg, type) {
+            const msgEl = document.getElementById('auth-message');
+            msgEl.innerText = msg;
+            msgEl.className = 'p-3 rounded-lg text-sm text-center ' + (type === 'success' ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700');
+            msgEl.classList.remove('hidden');
+        }
+
+        // ================= AI COACH CHAT =================
         document.getElementById('btn-send-chat').addEventListener('click', async () => {
             const inp = document.getElementById('chat-input');
             const msg = inp.value.trim();
             if(!msg) return;
 
             const box = document.getElementById('chat-box');
-            box.innerHTML += `<div class="bg-emerald-500 text-white p-2.5 rounded-xl max-w-[85%] self-end ml-auto">${msg}</div>`;
+            
+            // Add user message
+            const userMsgDiv = document.createElement('div');
+            userMsgDiv.className = 'bg-emerald-500 text-white p-2.5 rounded-xl max-w-[85%] ml-auto chat-message';
+            userMsgDiv.innerText = msg;
+            box.appendChild(userMsgDiv);
+            
             inp.value = "";
             box.scrollTop = box.scrollHeight;
 
-            box.innerHTML += `<div id="ai-loading" class="text-slate-400 italic">AI Coach sedang berpikir...</div>`;
+            // Add loading indicator
+            const loadingDiv = document.createElement('div');
+            loadingDiv.id = 'ai-loading';
+            loadingDiv.className = 'text-slate-400 italic text-xs';
+            loadingDiv.innerText = '⏳ AI Coach sedang berpikir...';
+            box.appendChild(loadingDiv);
+            box.scrollTop = box.scrollHeight;
 
             try {
-                // Menghubungkan ke backend proxy (bukan langsung ke Gemini API)
-                // Backend Anda akan menambahkan API key secara aman
-                const res = await fetch(`/api/chat`, {
+                // Call backend proxy
+                const res = await fetch('http://localhost:5000/api/chat', {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
@@ -425,19 +589,32 @@
                 });
                 
                 const data = await res.json();
-                document.getElementById('ai-loading').remove();
+                loadingDiv.remove();
                 
                 if (data.success) {
-                    const aiReply = data.reply;
-                    box.innerHTML += `<div class="bg-slate-100 text-slate-700 p-2.5 rounded-xl max-w-[85%]">${aiReply}</div>`;
+                    const aiMsgDiv = document.createElement('div');
+                    aiMsgDiv.className = 'bg-slate-100 text-slate-700 p-2.5 rounded-xl max-w-[85%] chat-message';
+                    aiMsgDiv.innerText = data.reply;
+                    box.appendChild(aiMsgDiv);
                 } else {
                     throw new Error("API Error");
                 }
             } catch(e) {
-                document.getElementById('ai-loading').remove();
-                box.innerHTML += `<div class="bg-rose-50 text-rose-600 p-2.5 rounded-xl max-w-[85%]">Maaf, AI Coach sedang kelebihan beban. Coba sesaat lagi ya!</div>`;
+                loadingDiv.remove();
+                const errDiv = document.createElement('div');
+                errDiv.className = 'bg-rose-50 text-rose-600 p-2.5 rounded-xl max-w-[85%] text-xs';
+                errDiv.innerText = '⚠️ Backend API tidak terhubung. Pastikan server berjalan di port 5000!';
+                box.appendChild(errDiv);
             }
             box.scrollTop = box.scrollHeight;
+        });
+
+        // Enter key to send chat
+        document.getElementById('chat-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                document.getElementById('btn-send-chat').click();
+            }
         });
 
         // PEMBUATAN GRAFIK AMAL (CHART.JS)
