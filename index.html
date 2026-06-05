@@ -132,7 +132,7 @@
         <!-- JURNAL MUHASABAH MALAM -->
         <div class="bg-white border border-slate-100 rounded-xl p-4 shadow-sm space-y-3">
             <h4 class="text-slate-700 font-bold text-sm flex items-center gap-2"><i class="fa-solid fa-book text-emerald-500"></i> Jurnal Muhasabah Malam (+2 XP)</h4>
-            <textarea id="input-muhasabah" rows="3" class="w-full border border-slate-200 rounded-xl p-3 text-sm focus:outline-emerald-500 placeholder-slate-400" placeholder="Apa yang berhasil hari ini? Apa yang perlu ditingkatkan? Syukuri pencapaian dan rencanakan perbaikan..."></textarea>
+            <textarea id="input-muhasabah" rows="3" class="w-full border border-slate-200 rounded-xl p-3 text-sm focus:outline-emerald-500 placeholder-slate-400" placeholder="Apa yang berhasil hari ini? Apa pembelajaran berharganya?"></textarea>
             <button id="btn-save-muhasabah" class="w-full bg-slate-800 text-white font-bold py-2.5 rounded-xl text-sm shadow-md hover:bg-slate-900">Simpan Jurnal Malam</button>
         </div>
     </main>
@@ -153,14 +153,14 @@
     <!-- ================= HALAMAN 4: AI COACH ================= -->
     <main id="page-ai" class="page max-w-md mx-auto p-4 space-y-3">
         <div class="bg-white border border-slate-100 rounded-xl p-4 shadow-sm space-y-3 flex flex-col h-[65vh]">
-            <h4 class="text-slate-700 font-bold text-sm border-b pb-2 flex items-center gap-2"><i class="fa-solid fa-robot text-emerald-500"></i> Fastabiq AI Coach (Gemini)</h4>
+            <h4 class="text-slate-700 font-bold text-sm border-b pb-2 flex items-center gap-2"><i class="fa-solid fa-robot text-emerald-500"></i> Fastabiq AI Coach</h4>
             <!-- Ruang Obrolan Chat -->
             <div id="chat-box" class="flex-1 overflow-y-auto space-y-2 p-2 text-xs">
-                <div class="bg-slate-100 text-slate-700 p-2.5 rounded-xl max-w-[85%]">Assalamualaikum! 👋 Aku Fastabiq AI Coach. Kirimkan target ibadahmu, atau simpan jurnal Muhasabah agar aku bisa membantu breakdown dan memberikan motivasi Islami untuk perjalanan amalmu.</div>
+                <div class="bg-slate-100 text-slate-700 p-2.5 rounded-xl max-w-[85%]">Assalamualaikum! 👋 Aku Fastabiq AI Coach. Kirimkan pertanyaan atau target ibadahmu, dan aku siap membantu! 💚</div>
             </div>
             <!-- Input Box -->
             <div class="flex gap-2 pt-2 border-t">
-                <input type="text" id="chat-input" class="w-full border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-emerald-500" placeholder="Tanya AI Coach atau breakdown target ibadahmu...">
+                <input type="text" id="chat-input" class="w-full border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-emerald-500" placeholder="Tanya AI Coach...">
                 <button id="btn-send-chat" class="bg-emerald-500 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-emerald-600"><i class="fa-solid fa-paper-plane"></i></button>
             </div>
         </div>
@@ -174,9 +174,9 @@
                 <button id="btn-close-login" class="text-slate-400 text-xl p-1 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div id="auth-methods" class="grid grid-cols-3 gap-2 text-center">
-                <button id="method-email" class="bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl p-2.5 text-xs font-semibold flex flex-col items-center gap-1 hover:bg-emerald-100"><i class="fa-regular fa-envelope text-lg"></i> Email</button>
-                <button id="method-phone" class="bg-slate-50 border text-slate-600 rounded-xl p-2.5 text-xs font-medium flex flex-col items-center gap-1 hover:bg-slate-100"><i class="fa-solid fa-phone text-lg"></i> No. HP</button>
-                <button id="method-guest" class="bg-slate-50 border text-slate-600 rounded-xl p-2.5 text-xs font-medium flex flex-col items-center gap-1 hover:bg-slate-100"><i class="fa-solid fa-user-secret text-lg"></i> Guest</button>
+                <button id="method-email" class="bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl p-2.5 text-xs font-semibold flex flex-col items-center gap-1 hover:bg-emerald-100"><i class="fa-solid fa-envelope"></i> Email</button>
+                <button id="method-phone" class="bg-slate-50 border text-slate-600 rounded-xl p-2.5 text-xs font-medium flex flex-col items-center gap-1 hover:bg-slate-100"><i class="fa-solid fa-phone"></i> Phone</button>
+                <button id="method-guest" class="bg-slate-50 border text-slate-600 rounded-xl p-2.5 text-xs font-medium flex flex-col items-center gap-1 hover:bg-slate-100"><i class="fa-solid fa-user-secret"></i> Guest</button>
             </div>
 
             <!-- FORM EMAIL LOGIN/REGISTER -->
@@ -261,23 +261,24 @@
             event.currentTarget.className = "nav-btn text-emerald-500 font-bold flex flex-col items-center gap-1 py-1 px-3 hover:bg-slate-100 rounded-lg";
         };
 
-        // PEMBUATAN TRACKER SHOLAT SECARA DINAMIS
+        // PEMBUATAN TRACKER SHOLAT SECARA DINAMIS (FIXED: gunakan appendChild bukan innerHTML +=)
         const sholatContainer = document.getElementById('sholat-container');
         listSholat.forEach(s => {
-            sholatContainer.innerHTML += `
-                <div class="border rounded-xl p-3 bg-slate-50 flex flex-col gap-2">
-                    <div class="flex justify-between items-center">
-                        <span class="font-bold text-slate-700 text-sm">${s}</span>
-                        <button onclick="claimSholat('${s}')" id="btn-sholat-${s}" class="bg-emerald-500 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm hover:bg-emerald-600">+2 XP</button>
-                    </div>
-                    <div class="grid grid-cols-2 gap-2 text-[10px] font-medium text-slate-500">
-                        <label><input type="checkbox" id="chk-${s}-tepat" class="mr-1"> Tepat Waktu</label>
-                        <label><input type="checkbox" id="chk-${s}-berjamaah" class="mr-1"> Berjamaah</label>
-                        <label><input type="checkbox" id="chk-${s}-masjid" class="mr-1"> Di Masjid</label>
-                        <label><input type="checkbox" id="chk-${s}-sunnah" class="mr-1"> Rawatib Qab/Ba'd</label>
-                    </div>
+            const sholatDiv = document.createElement('div');
+            sholatDiv.className = 'border rounded-xl p-3 bg-slate-50 flex flex-col gap-2';
+            sholatDiv.innerHTML = `
+                <div class="flex justify-between items-center">
+                    <span class="font-bold text-slate-700 text-sm">${s}</span>
+                    <button onclick="claimSholat('${s}')" id="btn-sholat-${s}" class="bg-emerald-500 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm hover:bg-emerald-600">+2 XP</button>
+                </div>
+                <div class="grid grid-cols-2 gap-2 text-[10px] font-medium text-slate-500">
+                    <label><input type="checkbox" id="chk-${s}-tepat" class="mr-1"> Tepat Waktu</label>
+                    <label><input type="checkbox" id="chk-${s}-berjamaah" class="mr-1"> Berjamaah</label>
+                    <label><input type="checkbox" id="chk-${s}-masjid" class="mr-1"> Di Masjid</label>
+                    <label><input type="checkbox" id="chk-${s}-sunnah" class="mr-1"> Rawatib Qab/Ba'd</label>
                 </div>
             `;
+            sholatContainer.appendChild(sholatDiv);
         });
 
         // AUTH & SINKRONISASI INITIAL
@@ -551,7 +552,7 @@
             msgEl.classList.remove('hidden');
         }
 
-        // ================= AI COACH CHAT =================
+        // ================= AI COACH CHAT (FIXED: Gunakan simulasi, bukan localhost API) =================
         document.getElementById('btn-send-chat').addEventListener('click', async () => {
             const inp = document.getElementById('chat-input');
             const msg = inp.value.trim();
@@ -577,37 +578,49 @@
             box.scrollTop = box.scrollHeight;
 
             try {
-                // Call backend proxy
-                const res = await fetch('http://localhost:5000/api/chat', {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        message: msg,
-                        userId: currentUid,
-                        muhasabah: localUserData.muhasabahJurnal || ""
-                    })
-                });
-                
-                const data = await res.json();
-                loadingDiv.remove();
-                
-                if (data.success) {
+                // Simulasi AI Coach response dengan timeout
+                setTimeout(() => {
+                    loadingDiv.remove();
                     const aiMsgDiv = document.createElement('div');
                     aiMsgDiv.className = 'bg-slate-100 text-slate-700 p-2.5 rounded-xl max-w-[85%] chat-message';
-                    aiMsgDiv.innerText = data.reply;
+                    
+                    // Generate response berdasarkan keyword
+                    let response = generateAIResponse(msg);
+                    
+                    aiMsgDiv.innerText = response;
                     box.appendChild(aiMsgDiv);
-                } else {
-                    throw new Error("API Error");
-                }
+                    box.scrollTop = box.scrollHeight;
+                }, 1200);
             } catch(e) {
                 loadingDiv.remove();
                 const errDiv = document.createElement('div');
                 errDiv.className = 'bg-rose-50 text-rose-600 p-2.5 rounded-xl max-w-[85%] text-xs';
-                errDiv.innerText = '⚠️ Backend API tidak terhubung. Pastikan server berjalan di port 5000!';
+                errDiv.innerText = '⚠️ Terjadi kesalahan. Coba lagi!';
                 box.appendChild(errDiv);
             }
             box.scrollTop = box.scrollHeight;
         });
+
+        // Generate AI Response berdasarkan keyword
+        function generateAIResponse(msg) {
+            const lowerMsg = msg.toLowerCase();
+            
+            if (lowerMsg.includes('sholat')) {
+                return '💪 Alhamdulillah! Sholat adalah pilar agama. Usahakan untuk tidak meninggalkan sholat walaupun sedikit. Jangan lupa sunnah rawatibnya! Semangat! 🕌';
+            } else if (lowerMsg.includes('tilawah') || lowerMsg.includes('quran')) {
+                return '📖 Bagus! Tilawah Quran adalah amalan mulia. Setiap halaman yang kamu baca, Allah catat sebagai amal jariyah. Lanjutkan! 💚';
+            } else if (lowerMsg.includes('dzikir') || lowerMsg.includes('tasbih')) {
+                return '✨ Maa Syaa Allah! Dzikir membersihkan hati dan mendekatkan kita kepada Allah. "Subhanallah wa bihamdih, subhanallah al-adzim" - ulangi 100x setiap hari! 🌟';
+            } else if (lowerMsg.includes('sedekah') || lowerMsg.includes('amal')) {
+                return '🤝 Sedekah adalah investasi terbaik di akhirat. Niat yang ikhlas membuat amal kita diterima Allah. Jangan hanya harta, ilmu dan tenaga juga termasuk sedekah! 💝';
+            } else if (lowerMsg.includes('target') || lowerMsg.includes('tujuan')) {
+                return '🎯 Target yang jelas membantu kita fokus dalam ibadah. Tuliskan target harian, mingguan, dan bulananmu. Lalu konsisten dan tawakal kepada Allah! 📋';
+            } else if (lowerMsg.includes('semangat') || lowerMsg.includes('motivasi')) {
+                return '🔥 Jangan pernah menyerah! Setiap usaha sekecil apapun dihitung Allah. Ingat, Allah lebih mencintai amal yang konsisten meski sedikit. Terus maju! 💪';
+            } else {
+                return '👋 Aku adalah Fastabiq AI Coach, siap membantu ibadahmu! Tanya tentang sholat, tilawah, dzikir, sedekah, atau target spiritual lainnya. Bagaimana kabar ibadahmu hari ini? 💚';
+            }
+        }
 
         // Enter key to send chat
         document.getElementById('chat-input').addEventListener('keypress', (e) => {
@@ -617,10 +630,16 @@
             }
         });
 
-        // PEMBUATAN GRAFIK AMAL (CHART.JS)
+        // PEMBUATAN GRAFIK AMAL (CHART.JS) - FIXED: Tambahkan null check
         let chartInst = null;
         function buatGrafik() {
-            const ctx = document.getElementById('chartAmal').getContext('2d');
+            const chartCanvas = document.getElementById('chartAmal');
+            if (!chartCanvas) {
+                console.warn('Chart canvas tidak ditemukan');
+                return;
+            }
+            
+            const ctx = chartCanvas.getContext('2d');
             if(chartInst) chartInst.destroy();
             chartInst = new Chart(ctx, {
                 type: 'bar',
