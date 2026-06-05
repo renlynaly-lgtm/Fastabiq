@@ -123,7 +123,7 @@
         <!-- JURNAL MUHASABAH MALAM -->
         <div class="bg-white border border-slate-100 rounded-xl p-4 shadow-sm space-y-3">
             <h4 class="text-slate-700 font-bold text-sm flex items-center gap-2"><i class="fa-solid fa-book text-emerald-500"></i> Jurnal Muhasabah Malam (+2 XP)</h4>
-            <textarea id="input-muhasabah" rows="3" class="w-full border border-slate-200 rounded-xl p-3 text-sm focus:outline-emerald-500 placeholder-slate-400" placeholder="Apa yang berhasil hari ini? Apa yang perlu diperbaiki untuk besok?"></textarea>
+            <textarea id="input-muhasabah" rows="3" class="w-full border border-slate-200 rounded-xl p-3 text-sm focus:outline-emerald-500 placeholder-slate-400" placeholder="Apa yang berhasil hari ini..."></textarea>
             <button id="btn-save-muhasabah" class="w-full bg-slate-800 text-white font-bold py-2.5 rounded-xl text-sm shadow-md">Simpan Jurnal Malam</button>
         </div>
     </main>
@@ -147,7 +147,7 @@
             <h4 class="text-slate-700 font-bold text-sm border-b pb-2 flex items-center gap-2"><i class="fa-solid fa-robot text-emerald-500"></i> Fastabiq AI Coach (Gemini)</h4>
             <!-- Ruang Obrolan Chat -->
             <div id="chat-box" class="flex-1 overflow-y-auto space-y-2 p-2 text-xs">
-                <div class="bg-slate-100 text-slate-700 p-2.5 rounded-xl max-w-[85%]">Assalamualaikum! Aku Fastabiq AI Coach. Kirimkan target ibadahmu, atau simpan jurnal Muhasabah agar aku bisa mengevaluasi konsistensimu.</div>
+                <div class="bg-slate-100 text-slate-700 p-2.5 rounded-xl max-w-[85%]">Assalamualaikum! Aku Fastabiq AI Coach. Kirimkan target ibadahmu, atau simpan jurnal Muhasabah agar aku bisa membantu breakdown dan motivasi Anda dengan wawasan Islami.</div>
             </div>
             <!-- Input Box -->
             <div class="flex gap-2 pt-2 border-t">
@@ -167,7 +167,7 @@
             <div id="auth-methods" class="grid grid-cols-3 gap-2 text-center">
                 <button id="method-email" class="bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl p-2.5 text-xs font-semibold flex flex-col items-center gap-1"><i class="fa-regular fa-envelope text-lg"></i> Email</button>
                 <button id="method-phone" class="bg-slate-50 border text-slate-600 rounded-xl p-2.5 text-xs font-medium flex flex-col items-center gap-1"><i class="fa-solid fa-phone text-lg"></i> No. HP</button>
-                <button id="method-guest" class="bg-slate-50 border text-slate-600 rounded-xl p-2.5 text-xs font-medium flex flex-col items-center gap-1"><i class="fa-solid fa-user-secret text-lg"></i> Tamu</button>
+                <button id="method-guest" class="bg-slate-50 border text-slate-600 rounded-xl p-2.5 text-xs font-medium flex flex-col items-center gap-1"><i class="fa-solid fa-user-secret text-lg"></i> Guest</button>
             </div>
             <form id="form-email" class="space-y-3">
                 <input type="email" id="email-input" required class="w-full border rounded-xl px-3 py-2.5 text-sm" placeholder="Email">
@@ -397,7 +397,8 @@
             }
         }
 
-        // INTEGRASI ARTIFICIAL INTELLIGENCE (GEMINI API) VIA CHATPROXY
+        // INTEGRASI ARTIFICIAL INTELLIGENCE (GEMINI API) VIA BACKEND PROXY
+        // ⚠️ PENTING: API Key disimpan di backend, bukan di client-side code
         document.getElementById('btn-send-chat').addEventListener('click', async () => {
             const inp = document.getElementById('chat-input');
             const msg = inp.value.trim();
@@ -411,21 +412,30 @@
             box.innerHTML += `<div id="ai-loading" class="text-slate-400 italic">AI Coach sedang berpikir...</div>`;
 
             try {
-                // Menghubungkan ke Gemini API secara langsung
-                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=AIzaSyAJl2vGTmqdqZTtmUAb_d6VVyzj6UEaC6w`, {
+                // Menghubungkan ke backend proxy (bukan langsung ke Gemini API)
+                // Backend Anda akan menambahkan API key secara aman
+                const res = await fetch(`/api/chat`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
-                        contents: [{ parts: [{ text: `Kamu adalah Fastabiq AI Coach, pendamping ibadah dan produktivitas Islami yang bijaksana, memotivasi, dan penuh empati. Jawab pesan pengguna ini dengan ringkas dan berikan saran terbaik: "${msg}". Data progress ibadah user hari ini adalah: XP Terkumpul ${localUserData.xpToday}, Progres Halaman Tilawah: ${localUserData.tilawahProgress}/604.` }] }]
+                        message: msg,
+                        userId: currentUid,
+                        muhasabah: localUserData.muhasabahJurnal || ""
                     })
                 });
+                
                 const data = await res.json();
                 document.getElementById('ai-loading').remove();
-                const aiReply = data.candidates[0].content.parts[0].text;
-                box.innerHTML += `<div class="bg-slate-100 text-slate-700 p-2.5 rounded-xl max-w-[85%]">${aiReply}</div>`;
+                
+                if (data.success) {
+                    const aiReply = data.reply;
+                    box.innerHTML += `<div class="bg-slate-100 text-slate-700 p-2.5 rounded-xl max-w-[85%]">${aiReply}</div>`;
+                } else {
+                    throw new Error("API Error");
+                }
             } catch(e) {
                 document.getElementById('ai-loading').remove();
-                box.innerHTML += `<div class="bg-rose-50 text-rose-600 p-2.5 rounded-xl max-w-[85%]">Maaf Jib, AI Coach sedang kelebihan beban. Coba sesaat lagi ya!</div>`;
+                box.innerHTML += `<div class="bg-rose-50 text-rose-600 p-2.5 rounded-xl max-w-[85%]">Maaf, AI Coach sedang kelebihan beban. Coba sesaat lagi ya!</div>`;
             }
             box.scrollTop = box.scrollHeight;
         });
