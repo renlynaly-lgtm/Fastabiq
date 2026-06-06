@@ -153,10 +153,10 @@
     <!-- ================= HALAMAN 4: AI COACH ================= -->
     <main id="page-ai" class="page max-w-md mx-auto p-4 space-y-3">
         <div class="bg-white border border-slate-100 rounded-xl p-4 shadow-sm space-y-3 flex flex-col h-[65vh]">
-            <h4 class="text-slate-700 font-bold text-sm border-b pb-2 flex items-center gap-2"><i class="fa-solid fa-robot text-emerald-500"></i> Fastabiq AI Coach (Gemini Pro)</h4>
+            <h4 class="text-slate-700 font-bold text-sm border-b pb-2 flex items-center gap-2"><i class="fa-solid fa-robot text-emerald-500"></i> Fastabiq AI Coach</h4>
             <!-- Ruang Obrolan Chat -->
             <div id="chat-box" class="flex-1 overflow-y-auto space-y-2 p-2 text-xs">
-                <div class="bg-slate-100 text-slate-700 p-2.5 rounded-xl max-w-[85%]">Assalamualaikum! 👋 Aku Fastabiq AI Coach berbasis Google Gemini. Kirimkan pertanyaan tentang ibadahmu, dan aku siap membantu! 💚</div>
+                <div class="bg-slate-100 text-slate-700 p-2.5 rounded-xl max-w-[85%]">Assalamualaikum! 👋 Aku Fastabiq AI Coach. Kirimkan pertanyaan tentang ibadahmu, dan aku siap membantu! 💚</div>
             </div>
             <!-- Input Box -->
             <div class="flex gap-2 pt-2 border-t">
@@ -174,7 +174,7 @@
                 <button id="btn-close-login" class="text-slate-400 text-xl p-1 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div id="auth-methods" class="grid grid-cols-3 gap-2 text-center">
-                <button id="method-email" class="bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl p-2.5 text-xs font-semibold flex flex-col items-center gap-1 hover:bg-emerald-100"><i class="fa-solid fa-envelope"></i> Email</button>
+                <button id="method-email" class="bg-emerald-50 border border-emerald-400 text-emerald-700 rounded-xl p-2.5 text-xs font-semibold flex flex-col items-center gap-1 hover:bg-emerald-100"><i class="fa-solid fa-envelope"></i> Email</button>
                 <button id="method-phone" class="bg-slate-50 border text-slate-600 rounded-xl p-2.5 text-xs font-medium flex flex-col items-center gap-1 hover:bg-slate-100"><i class="fa-solid fa-phone"></i> Phone</button>
                 <button id="method-guest" class="bg-slate-50 border text-slate-600 rounded-xl p-2.5 text-xs font-medium flex flex-col items-center gap-1 hover:bg-slate-100"><i class="fa-solid fa-user-secret"></i> Guest</button>
             </div>
@@ -249,20 +249,32 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // GEMINI API KEY
+        // GEMINI API KEY & CONFIG (Updated to 1.5-flash)
         const GEMINI_API_KEY = "AIzaSyAwisAQprYRG59rFLncOgv34BAyNRJupNQ";
-        const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent";
+        const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
+        let chatHistory = [];
 
         let currentUid = null;
         let localUserData = { totalXP: 0, xpToday: 0, streak: 0, score: 0, tilawahProgress: 0, dzikirCount: 0, sholat: {}, sedekah: 0, belajar: [] };
         const listSholat = ["Subuh", "Dzuhur", "Ashar", "Maghrib", "Isya"];
 
-        // NAVIGASI HALAMAN
+        // NAVIGASI HALAMAN (Fixed)
         window.switchPage = function(pageId) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById('page-' + pageId).classList.add('active');
-            document.querySelectorAll('.nav-btn').forEach(btn => btn.className = "nav-btn text-slate-400 flex flex-col items-center gap-1 py-1 px-3 hover:bg-slate-100 rounded-lg");
-            event.currentTarget.className = "nav-btn text-emerald-500 font-bold flex flex-col items-center gap-1 py-1 px-3 hover:bg-slate-100 rounded-lg";
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.className = "nav-btn text-slate-400 flex flex-col items-center gap-1 py-1 px-3 hover:bg-slate-100 rounded-lg";
+            });
+            
+            const activeBtn = document.querySelector(`.nav-btn[onclick*="${pageId}"]`);
+            if(activeBtn) {
+                activeBtn.className = "nav-btn text-emerald-500 font-bold flex flex-col items-center gap-1 py-1 px-3 hover:bg-slate-100 rounded-lg";
+            }
+
+            if (pageId === 'analytics') {
+                buatGrafik();
+            }
         };
 
         // PEMBUATAN TRACKER SHOLAT SECARA DINAMIS
@@ -340,7 +352,11 @@
             });
             document.getElementById('tasks-completed').innerText = selesai;
             document.getElementById('progress-bar-fill').style.width = (selesai / 5 * 100) + "%";
-            buatGrafik();
+            
+            // Perbaikan grafik: Hanya update isi data grafik jika canvas aktif
+            if(document.getElementById('page-analytics').classList.contains('active')){
+                buatGrafik();
+            }
         }
 
         function hitungLevel(xp) {
@@ -356,7 +372,7 @@
             return { lvl: 1, rank: "Pemula" };
         }
 
-        // LOGIKA KLAIM AMAL & ANTI-CURANG
+        // LOGIKA KLAIM AMAL & ANTI-CURANG (Fixed UI Update)
         window.claimSholat = async function(sholatName) {
             if (!localUserData.sholat) localUserData.sholat = {};
             if (localUserData.sholat[sholatName]?.claimed) return;
@@ -372,6 +388,14 @@
             localUserData.totalXP += 2;
             localUserData.xpToday += 2;
             localUserData.score = Math.min(100, localUserData.score + 15);
+
+            // Update UI Tombol Langsung
+            const btn = document.getElementById(`btn-sholat-${sholatName}`);
+            if(btn) {
+                btn.innerText = "Selesai ✓";
+                btn.className = "bg-slate-200 text-slate-400 text-xs px-3 py-1.5 rounded-lg cursor-not-allowed";
+                btn.disabled = true;
+            }
 
             saveAndUpdate();
         };
@@ -533,12 +557,20 @@
             }
         });
 
-        // Auth Method Toggle
+        // Auth Method Toggle (Fixed Phone Method)
         document.getElementById('method-email').addEventListener('click', () => {
             document.getElementById('form-email').classList.remove('hidden');
             document.getElementById('form-phone').classList.add('hidden');
             document.getElementById('method-email').classList.add('border-emerald-400', 'bg-emerald-100');
             document.getElementById('method-phone').classList.remove('border-emerald-400', 'bg-emerald-100');
+            document.getElementById('method-guest').classList.remove('border-emerald-400', 'bg-emerald-100');
+        });
+
+        document.getElementById('method-phone').addEventListener('click', () => {
+            document.getElementById('form-email').classList.add('hidden');
+            document.getElementById('form-phone').classList.remove('hidden');
+            document.getElementById('method-phone').classList.add('border-emerald-400', 'bg-emerald-100');
+            document.getElementById('method-email').classList.remove('border-emerald-400', 'bg-emerald-100');
             document.getElementById('method-guest').classList.remove('border-emerald-400', 'bg-emerald-100');
         });
 
@@ -556,7 +588,7 @@
             msgEl.classList.remove('hidden');
         }
 
-        // ================= AI COACH CHAT - POWERED BY GEMINI PRO =================
+        // ================= AI COACH CHAT - GEMINI 1.5 FLASH (Fixed) =================
         document.getElementById('btn-send-chat').addEventListener('click', async () => {
             const inp = document.getElementById('chat-input');
             const msg = inp.value.trim();
@@ -564,53 +596,38 @@
 
             const box = document.getElementById('chat-box');
             
-            // Add user message
             const userMsgDiv = document.createElement('div');
-            userMsgDiv.className = 'bg-emerald-500 text-white p-2.5 rounded-xl max-w-[85%] ml-auto chat-message';
+            userMsgDiv.className = 'bg-emerald-500 text-white p-2.5 rounded-xl max-w-[85%] ml-auto chat-message mt-2';
             userMsgDiv.innerText = msg;
             box.appendChild(userMsgDiv);
             
             inp.value = "";
             box.scrollTop = box.scrollHeight;
 
-            // Add loading indicator
             const loadingDiv = document.createElement('div');
             loadingDiv.id = 'ai-loading';
-            loadingDiv.className = 'text-slate-400 italic text-xs';
-            loadingDiv.innerText = '⏳ Gemini AI Coach sedang berpikir...';
+            loadingDiv.className = 'text-slate-400 italic text-xs mt-2';
+            loadingDiv.innerText = '⏳ Fastabiq AI sedang berpikir...';
             box.appendChild(loadingDiv);
             box.scrollTop = box.scrollHeight;
 
             try {
-                // Build system prompt dengan context pengguna
+                chatHistory.push({ role: "user", parts: [{ text: msg }] });
+
                 const levelInfo = hitungLevel(localUserData.totalXP || 0);
-                const systemPrompt = `Anda adalah Fastabiq AI Coach - asisten spiritual Islam yang membantu pengguna dalam ibadah sehari-hari.
+                const sholatSelesai = document.getElementById('tasks-completed').innerText;
+                
+                const systemInstruction = `Anda adalah Fastabiq AI Coach - asisten spiritual Islam. Data pengguna saat ini: Level ${levelInfo.lvl} (${levelInfo.rank}), XP: ${localUserData.xpToday}, Sholat selesai: ${sholatSelesai}/5. Berikan motivasi Islam yang hangat, praktis, maksimal 100 kata, dan gunakan emoji.`;
 
-PROFIL PENGGUNA:
-- XP Hari Ini: ${localUserData.xpToday}
-- Level: ${levelInfo.lvl} (${levelInfo.rank})
-- Tilawah Progress: ${localUserData.tilawahProgress}/604 halaman
-- Dzikir Hari Ini: ${localUserData.dzikirCount} kali
-- Jurnal Muhasabah: ${localUserData.muhasabahJurnal ? '✅ Sudah ada' : '❌ Belum ada'}
+                const payload = {
+                    system_instruction: { parts: [{ text: systemInstruction }] },
+                    contents: chatHistory
+                };
 
-PEDOMAN RESPONS:
-1. Berikan motivasi Islam yang hangat, praktis, dan relevan
-2. Gunakan emoji untuk membuat lebih menarik
-3. Maksimal 100 kata
-4. Fokus pada peningkatan ibadah dan spiritual
-5. Jika ada pertanyaan teknis, berikan jawaban yang mudah dipahami`;
-
-                // Call Gemini API
                 const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        contents: [{
-                            parts: [{
-                                text: `${systemPrompt}\n\nPertanyaan pengguna: ${msg}`
-                            }]
-                        }]
-                    })
+                    body: JSON.stringify(payload)
                 });
 
                 const data = await response.json();
@@ -618,25 +635,29 @@ PEDOMAN RESPONS:
 
                 if (data.candidates && data.candidates[0] && data.candidates[0].content.parts[0]) {
                     const aiResponse = data.candidates[0].content.parts[0].text;
+                    
                     const aiMsgDiv = document.createElement('div');
-                    aiMsgDiv.className = 'bg-slate-100 text-slate-700 p-2.5 rounded-xl max-w-[85%] chat-message';
+                    aiMsgDiv.className = 'bg-slate-100 text-slate-700 p-2.5 rounded-xl max-w-[85%] chat-message mt-2';
                     aiMsgDiv.innerText = aiResponse;
                     box.appendChild(aiMsgDiv);
+
+                    chatHistory.push({ role: "model", parts: [{ text: aiResponse }] });
                 } else {
-                    throw new Error(data.error?.message || "Tidak ada respons dari Gemini");
+                    throw new Error(data.error?.message || "Terjadi kesalahan pada respon Gemini");
                 }
             } catch(e) {
                 loadingDiv.remove();
                 const errDiv = document.createElement('div');
-                errDiv.className = 'bg-rose-50 text-rose-600 p-2.5 rounded-xl max-w-[85%] text-xs';
-                errDiv.innerText = `⚠️ Error: ${e.message}. Periksa koneksi internet Anda.`;
+                errDiv.className = 'bg-rose-50 text-rose-600 p-2.5 rounded-xl max-w-[85%] text-xs chat-message mt-2';
+                errDiv.innerText = `⚠️ Error: ${e.message}. Pastikan koneksi aman.`;
                 box.appendChild(errDiv);
+                chatHistory.pop(); 
                 console.error("Chat error:", e);
             }
+            
             box.scrollTop = box.scrollHeight;
         });
 
-        // Enter key to send chat
         document.getElementById('chat-input').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
@@ -644,14 +665,11 @@ PEDOMAN RESPONS:
             }
         });
 
-        // PEMBUATAN GRAFIK AMAL (CHART.JS)
+        // PEMBUATAN GRAFIK AMAL (CHART.JS - Fixed rendering issue)
         let chartInst = null;
         function buatGrafik() {
             const chartCanvas = document.getElementById('chartAmal');
-            if (!chartCanvas) {
-                console.warn('Chart canvas tidak ditemukan');
-                return;
-            }
+            if (!chartCanvas) return;
             
             const ctx = chartCanvas.getContext('2d');
             if(chartInst) chartInst.destroy();
